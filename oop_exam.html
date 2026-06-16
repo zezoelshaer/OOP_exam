@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java OOP — مراجعة الامتحان</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#2d333b;
+  --border:#30363d;--border2:#444c56;
+  --accent:#7c6fcd;--accent2:#a78bfa;--accent3:#c4b5fd;
+  --green:#238636;--green2:#3fb950;--green-bg:#0d2818;
+  --red:#da3633;--red2:#f85149;--red-bg:#2d1b1b;
+  --yellow:#d29922;--yellow2:#e3b341;
+  --blue:#1f6feb;--blue2:#79c0ff;--blue-bg:#1c2128;
+  --purple:#6e40c9;--purple2:#bc8cff;--purple-bg:#1e1b4b;
+  --teal:#1abc9c;--teal2:#4dd0e1;--teal-bg:#0d2626;
+  --orange:#e67e22;--orange2:#f39c12;--orange-bg:#2d1600;
+  --text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
+  --mono:'Courier New',Consolas,monospace;
+  --font:'Segoe UI',Tahoma,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh}
+
+/* ── TOP NAV ── */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;
+  display:flex;align-items:center;position:sticky;top:0;z-index:300;height:52px}
+.nav-logo{font-size:16px;font-weight:700;color:var(--accent2);display:flex;align-items:center;gap:8px}
+.nav-tabs{display:flex;gap:0;margin-right:28px}
+.nav-tab{padding:0 20px;height:52px;font-size:13.5px;font-weight:600;color:var(--text2);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;
+  background:none;border-top:none;border-left:none;border-right:none;
+  font-family:var(--font);display:flex;align-items:center;gap:7px;white-space:nowrap}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--accent2);border-bottom-color:var(--accent2)}
+.nav-right{margin-right:auto;display:flex;align-items:center;gap:16px}
+.nav-score{font-size:13px;font-weight:600;color:var(--green2);background:var(--green-bg);
+  border:1px solid var(--green);padding:4px 14px;border-radius:20px}
+
+/* ── PAGES ── */
+.page{display:none;padding:28px 0 60px}
+.page.active{display:block}
+.container{max-width:900px;margin:0 auto;padding:0 24px}
+
+/* ── MCQ HEADER ── */
+.page-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 10px;text-align:center}
+.stat-n{font-size:26px;font-weight:700;line-height:1}
+.stat-l{font-size:11px;color:var(--text2);margin-top:4px}
+.stat-box.s-all  .stat-n{color:var(--accent2)}
+.stat-box.s-ok   .stat-n{color:var(--green2)}
+.stat-box.s-bad  .stat-n{color:var(--red2)}
+.stat-box.s-rem  .stat-n{color:var(--yellow2)}
+
+/* ── PROGRESS ── */
+.prog{margin-bottom:20px}
+.prog-bar{background:var(--bg3);border-radius:4px;height:6px;margin-bottom:6px}
+.prog-fill{background:linear-gradient(90deg,var(--accent),var(--accent2));height:6px;
+  border-radius:4px;transition:width .4s ease}
+.prog-lbl{font-size:12px;color:var(--text2)}
+
+/* ── FILTER ── */
+.filter-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px;align-items:center}
+.filter-lbl{font-size:12px;color:var(--text2);font-weight:600;padding:5px 0}
+.fbtn{padding:5px 13px;border-radius:20px;border:1px solid var(--border);
+  background:var(--bg2);color:var(--text2);font-size:12px;cursor:pointer;
+  font-family:var(--font);transition:all .12s;white-space:nowrap}
+.fbtn:hover{border-color:var(--accent);color:var(--accent2)}
+.fbtn.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+
+/* ── MCQ CARD ── */
+.q-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:14px;overflow:hidden;transition:border-color .2s}
+.q-card.c-ok  {border-color:var(--green)}
+.q-card.c-bad {border-color:var(--red)}
+.q-head{padding:15px 18px 12px;border-bottom:1px solid var(--border)}
+.q-meta{display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap;align-items:center}
+.badge{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;letter-spacing:.2px}
+.b-num{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.b-topic{background:var(--blue-bg);color:var(--blue2);border:1px solid #388bfd55}
+.b-hard{background:var(--red-bg);color:var(--red2);border:1px solid #da363355}
+.q-text{font-size:15px;color:var(--text);line-height:1.65;font-weight:500}
+.q-body{padding:13px 18px;display:flex;flex-direction:column;gap:8px}
+
+/* ── OPTIONS ── */
+.opt{display:flex;gap:12px;align-items:flex-start;padding:11px 14px;border-radius:9px;
+  border:1px solid var(--border);background:var(--bg3);cursor:pointer;
+  font-size:13.5px;color:var(--text);text-align:right;width:100%;
+  transition:all .12s;font-family:var(--font);line-height:1.55}
+.opt:hover:not(.dis){border-color:var(--accent);background:#1e1b3a}
+.opt.ok {background:var(--green-bg);border-color:var(--green);color:var(--green2)}
+.opt.bad{background:var(--red-bg);border-color:var(--red);color:var(--red2)}
+.opt.rev{background:var(--green-bg);border-color:var(--green);color:var(--green2)}
+.opt.dis{cursor:default;pointer-events:none}
+.ok-k {color:var(--green2)!important}
+.bad-k{color:var(--red2)!important}
+.rev-k{color:var(--green2)!important}
+.opt-k{font-weight:700;min-width:18px;color:var(--accent2);
+  font-family:var(--mono);font-size:13px;flex-shrink:0;margin-top:1px}
+.opt-v{flex:1}
+.opt-ico{margin-right:auto;flex-shrink:0;font-size:14px;font-weight:700;padding-right:2px}
+
+/* ── EXPLANATION ── */
+.exp{background:#0c1929;border:1px solid #1f6feb55;border-radius:9px;
+  padding:13px 15px;font-size:13px;color:var(--blue2);line-height:1.75;display:none}
+.exp.show{display:block}
+.exp-hd{font-weight:700;color:var(--accent2);font-size:11px;
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.reveal-btn{align-self:flex-start;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-size:12px;padding:7px 14px;border-radius:8px;
+  cursor:pointer;font-family:var(--font);transition:all .12s;margin-top:2px}
+.reveal-btn:hover{border-color:var(--yellow);color:var(--yellow2)}
+
+/* ── RESULT CARD ── */
+.result-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:28px 24px;text-align:center;margin-bottom:22px;display:none}
+.result-wrap.show{display:block}
+.res-big{font-size:56px;font-weight:700;color:var(--accent2);line-height:1;margin:8px 0 6px}
+.res-sub{font-size:14px;color:var(--text2);margin-bottom:18px}
+.res-stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.restart-btn{background:var(--accent);border:none;color:#fff;
+  padding:11px 28px;border-radius:10px;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:var(--font);transition:opacity .12s}
+.restart-btn:hover{opacity:.85}
+
+/* ── COMP PAGE ── */
+.comp-card{background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;margin-bottom:32px;overflow:hidden}
+.comp-head{padding:18px 22px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:14px}
+.comp-num{width:36px;height:36px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-size:15px;font-weight:700;
+  flex-shrink:0;background:var(--accent);color:#fff}
+.comp-head-text{}
+.comp-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:3px}
+.comp-subtitle{font-size:12px;color:var(--text2)}
+.comp-body{padding:22px}
+.comp-section{margin-bottom:22px}
+.comp-section:last-child{margin-bottom:0}
+.section-title{font-size:11px;color:var(--text2);text-transform:uppercase;
+  letter-spacing:1px;margin-bottom:10px;font-family:var(--mono);
+  display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* question box */
+.q-box{background:var(--bg3);border:1px solid var(--border);border-radius:9px;
+  padding:14px 16px;font-size:13.5px;color:var(--text);line-height:1.8;
+  white-space:pre-line}
+.q-box strong{color:var(--accent2)}
+
+/* ── UML DIAGRAM ── */
+.uml-canvas{background:#0a0e1a;border:1px solid var(--border);border-radius:10px;
+  padding:24px;overflow-x:auto;min-height:200px}
+.uml-grid{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.uml-node{border-radius:8px;min-width:200px;max-width:280px;overflow:hidden;
+  border-width:1px;border-style:solid;font-family:var(--mono);font-size:12px}
+.uml-node-head{padding:8px 12px;text-align:center;font-weight:700;font-size:13px}
+.uml-node-stereo{font-size:10px;font-style:italic;font-weight:400;opacity:.8;display:block;margin-bottom:1px}
+.uml-node-name{font-size:13px;font-weight:700}
+.uml-section{border-top:1px solid;padding:8px 12px;display:flex;flex-direction:column;gap:3px}
+.uml-item{font-size:11.5px;line-height:1.5;white-space:nowrap}
+.uml-relations{margin-top:14px;background:#0d1117;border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;display:flex;gap:20px;flex-wrap:wrap}
+.uml-rel{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;font-family:var(--mono)}
+.rel-arrow{font-size:16px;color:var(--accent2)}
+.rel-label{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
+.rel-extends{background:#1e1b4b;color:var(--accent2);border:1px solid var(--accent)}
+.rel-implements{background:#0d2818;color:var(--green2);border:1px solid var(--green)}
+.rel-uses{background:var(--blue-bg);color:var(--blue2);border:1px solid #388bfd55}
+.main-hint{background:#0d1117;border:1px solid #388bfd44;border-radius:8px;
+  padding:10px 14px;font-size:12px;color:var(--blue2);font-family:var(--mono);
+  white-space:pre;margin-top:12px}
+
+/* code block */
+.code-wrap{position:relative}
+.code-box{background:#0d1117;border:1px solid var(--border);border-radius:8px;
+  padding:16px;font-family:var(--mono);font-size:12px;color:#c0caf5;
+  white-space:pre;overflow-x:auto;line-height:1.65;display:none}
+.code-box.show{display:block}
+.code-btn-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.code-toggle-btn{background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-size:12px;padding:7px 16px;border-radius:8px;
+  cursor:pointer;font-family:var(--font);transition:all .15s;font-weight:600}
+.code-toggle-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.code-toggle-btn.showing{background:var(--purple-bg);border-color:var(--purple2);color:var(--purple2)}
+.copy-btn{background:var(--bg3);border:1px solid var(--border);
+  color:var(--text2);font-size:12px;padding:7px 14px;border-radius:8px;
+  cursor:pointer;font-family:var(--font);transition:all .12s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent2)}
+
+/* node color themes */
+.node-enum    {border-color:#1e90d4;background:#071828}
+.node-enum    .uml-node-head{background:#0e4d6e;color:#7dd3fc}
+.node-enum    .uml-section{border-color:#1e90d455;color:#7dd3fc}
+
+.node-iface   {border-color:#9b59b6;background:#1a0d2e}
+.node-iface   .uml-node-head{background:#2d1b4e;color:#d8b4fe}
+.node-iface   .uml-section{border-color:#9b59b655;color:#c084fc}
+
+.node-abstract{border-color:#c678dd;background:#1a0828}
+.node-abstract .uml-node-head{background:#4a1060;color:#f0abfc}
+.node-abstract .uml-section{border-color:#c678dd55;color:#e879f9}
+.node-abstract .uml-item{color:#d8b4fe}
+
+.node-class1  {border-color:#e67e22;background:#1a0c00}
+.node-class1  .uml-node-head{background:#4a2800;color:#fed7aa}
+.node-class1  .uml-section{border-color:#e67e2255;color:#fdba74}
+.node-class1  .uml-item{color:#fcd34d}
+
+.node-class2  {border-color:#27ae60;background:#071a0d}
+.node-class2  .uml-node-head{background:#1a3d1a;color:#86efac}
+.node-class2  .uml-section{border-color:#27ae6055;color:#86efac}
+.node-class2  .uml-item{color:#4ade80}
+
+.node-class3  {border-color:#17a2b8;background:#071318}
+.node-class3  .uml-node-head{background:#1a3d4a;color:#67e8f9}
+.node-class3  .uml-section{border-color:#17a2b855;color:#22d3ee}
+.node-class3  .uml-item{color:#a5f3fc}
+
+/* topics row */
+.topics-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.t-tag{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
+.t-abstract  {background:#1a0828;color:#f0abfc;border:1px solid #c678dd55}
+.t-interface {background:#1a0d2e;color:#d8b4fe;border:1px solid #9b59b655}
+.t-enum      {background:#071828;color:#7dd3fc;border:1px solid #1e90d455}
+.t-static    {background:#0c1929;color:var(--blue2);border:1px solid #388bfd55}
+.t-exception {background:var(--red-bg);color:var(--red2);border:1px solid var(--red)55}
+.t-arraylist {background:#1a3d1a;color:#86efac;border:1px solid #27ae6055}
+.t-inherit   {background:var(--purple-bg);color:var(--purple2);border:1px solid var(--purple)55}
+.t-poly      {background:var(--orange-bg);color:var(--orange2);border:1px solid var(--orange)55}
+.t-other     {background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+
+@media(max-width:640px){
+  .nav-tab{padding:0 12px;font-size:12px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .container{padding:0 14px}
+  .uml-grid{flex-direction:column}
+  .uml-node{max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-right">
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('mcq',this)">📝 50 سؤال نظري MCQ</button>
+      <button class="nav-tab" onclick="showPage('comp',this)">🖼 5 أسئلة UML</button>
+    </div>
+  </div>
+  <div class="nav-logo">☕ Java OOP Exam</div>
+</nav>
+
+<!-- ══ MCQ PAGE ══ -->
+<div class="page active" id="page-mcq">
+<div class="container">
+  <div class="page-title">أسئلة نظرية — Java OOP</div>
+  <div class="page-sub">50 سؤال MCQ يغطي كل مواضيع Java OOP — اضغط على الإجابة تظهر صح أو غلط فوراً ✓✗</div>
+
+  <div class="stats-grid">
+    <div class="stat-box s-all"><div class="stat-n" id="s-tot">50</div><div class="stat-l">إجمالي</div></div>
+    <div class="stat-box s-ok"><div class="stat-n" id="s-cor">0</div><div class="stat-l">✓ صحيح</div></div>
+    <div class="stat-box s-bad"><div class="stat-n" id="s-wrg">0</div><div class="stat-l">✗ خطأ</div></div>
+    <div class="stat-box s-rem"><div class="stat-n" id="s-rem">50</div><div class="stat-l">متبقي</div></div>
+  </div>
+
+  <div class="prog">
+    <div class="prog-bar"><div class="prog-fill" id="pbar" style="width:0%"></div></div>
+    <div class="prog-lbl" id="plbl">0 من 50 أُجيب عليها</div>
+  </div>
+
+  <div class="filter-row" id="filterRow">
+    <span class="filter-lbl">🔍 موضوع:</span>
+    <button class="fbtn active" onclick="setFilter('all',this)">الكل</button>
+  </div>
+
+  <div class="result-wrap" id="resWrap">
+    <div id="resEmoji" style="font-size:40px;margin-bottom:8px">🎉</div>
+    <div class="res-big" id="resBig">-</div>
+    <div class="res-sub" id="resSub">-</div>
+    <div class="res-stats" id="resStats"></div>
+    <button class="restart-btn" onclick="restart()">🔄 إعادة الاختبار</button>
+  </div>
+
+  <div id="qList"></div>
+</div>
+</div>
+
+<!-- ══ COMP PAGE ══ -->
+<div class="page" id="page-comp">
+<div class="container">
+  <div class="page-title">أسئلة UML الشاملة</div>
+  <div class="page-sub">5 أسئلة شاملة تجمع كل مواضيع OOP — ادرس الـ UML والمطلوب، ثم اضغط "اظهر الكود" للمراجعة</div>
+  <div id="compList"></div>
+</div>
+</div>
+
+<script>
+const MCQ  = [{"id": 1, "topic": "OOP Concepts", "q": "ما هو الـ Object في Java؟", "opts": {"A": "نوع بيانات أساسي مثل int", "B": "instance من class يحتوي على fields وmethods", "C": "مجموعة من الـ methods فقط", "D": "نوع من أنواع الـ interfaces"}, "correct": "B", "exp": "الـ Object هو instance من class، يحتوي على state (fields) وbehavior (methods)."}, {"id": 2, "topic": "OOP Concepts", "q": "ما الفرق بين الـ Class والـ Object؟", "opts": {"A": "لا فرق بينهما", "B": "Class هو instance والObject هو blueprint", "C": "Class هو blueprint والObject هو instance منه", "D": "Object يُعرَّف بـ class keyword"}, "correct": "C", "exp": "Class هو القالب (blueprint)، والObject هو الكائن الفعلي المُنشأ منه في الذاكرة."}, {"id": 3, "topic": "OOP Concepts", "q": "أي من التالي يصف الـ Field في Java؟", "opts": {"A": "دالة تُنفِّذ عملية معينة", "B": "متغير مُعرَّف داخل الـ class يمثل خاصية الكائن", "C": "كلمة محجوزة في Java", "D": "نوع من أنواع الـ constructors"}, "correct": "B", "exp": "الـ Field (أو instance variable) هو متغير مُعرَّف داخل الـ class يمثل خصائص الكائن."}, {"id": 4, "topic": "OOP Concepts", "q": "ما هو الـ Method في Java؟", "opts": {"A": "متغير يخزن قيمة", "B": "نوع بيانات مركب", "C": "كتلة من الكود تُنفِّذ مهمة معينة وقد تُعيد قيمة", "D": "اسم الـ class"}, "correct": "C", "exp": "الـ Method هو كتلة كود مُسمَّاة تُنفِّذ مهمة محددة، ويمكنها قبول parameters وإعادة قيمة."}, {"id": 5, "topic": "OOP Concepts", "q": "ما معنى مفهوم الـ State في الكائن؟", "opts": {"A": "السرعة التي يعمل بها البرنامج", "B": "القيم الحالية لـ fields الكائن", "C": "عدد الـ methods في الـ class", "D": "نوع الـ return type للـ method"}, "correct": "B", "exp": "الـ State يشير إلى القيم الحالية المخزنة في fields الكائن في لحظة معينة."}, {"id": 6, "topic": "Access Modifiers", "q": "أي Access Modifier يجعل العضو متاحاً من أي مكان؟", "opts": {"A": "private", "B": "protected", "C": "package-level (default)", "D": "public"}, "correct": "D", "exp": "public يجعل العضو متاحاً من أي class في أي package."}, {"id": 7, "topic": "Access Modifiers", "q": "أي Access Modifier يحصر الوصول داخل الـ class نفسه فقط؟", "opts": {"A": "public", "B": "private", "C": "protected", "D": "default"}, "correct": "B", "exp": "private يحصر الوصول على الـ class الذي عرَّفه فقط، لا يمكن لأي class آخر الوصول إليه."}, {"id": 8, "topic": "Access Modifiers", "q": "الـ protected member يكون متاحاً لـ...", "opts": {"A": "الـ class نفسه فقط", "B": "الـ class نفسه وأي class في أي package", "C": "الـ class نفسه وأي subclass وكلاس في نفس الـ package", "D": "أي class في نفس الـ package فقط"}, "correct": "C", "exp": "protected يتيح الوصول داخل الـ class نفسه، وأي subclass ترث منه، وأي class في نفس الـ package."}, {"id": 9, "topic": "Access Modifiers", "q": "ما هو الـ default access modifier (package-level) في Java؟", "opts": {"A": "يكتب كلمة 'default' قبل العضو", "B": "لا تكتب أي modifier — Java يطبقه تلقائياً", "C": "يكتب كلمة 'package' قبل العضو", "D": "هو نفسه الـ protected"}, "correct": "B", "exp": "الـ package-level (default) يُطبَّق تلقائياً عندما لا تكتب أي access modifier. يتيح الوصول لأي class في نفس الـ package فقط."}, {"id": 10, "topic": "Access Modifiers", "q": "ما هو أفضل ممارسة لتعريف fields الـ class؟", "opts": {"A": "تعريفها public لسهولة الوصول", "B": "تعريفها private وتوفير getters/setters", "C": "تعريفها protected دائماً", "D": "تعريفها بدون أي modifier"}, "correct": "B", "exp": "أفضل ممارسة هي تعريف fields كـ private واستخدام getters/setters للتحكم في الوصول — وهذا هو مفهوم Encapsulation."}, {"id": 11, "topic": "Encapsulation", "q": "ما هو هدف الـ Encapsulation؟", "opts": {"A": "زيادة سرعة البرنامج", "B": "إخفاء التفاصيل الداخلية والتحكم في الوصول للبيانات", "C": "السماح لكل الـ classes بالوصول للبيانات", "D": "إنشاء كائنات متعددة"}, "correct": "B", "exp": "Encapsulation يهدف لإخفاء التفاصيل الداخلية للـ class وتوفير واجهة محكومة للوصول للبيانات عبر methods."}, {"id": 12, "topic": "Encapsulation", "q": "ما هو الـ Getter method؟", "opts": {"A": "method تُعدِّل قيمة field", "B": "method تُعيد قيمة private field", "C": "method تُنشئ كائناً جديداً", "D": "method تحذف الكائن"}, "correct": "B", "exp": "الـ Getter هو method تُعيد قيمة private field، وتسمى عادةً get + اسم الـ field."}, {"id": 13, "topic": "Encapsulation", "q": "ما هو الـ Setter method؟", "opts": {"A": "method تُعيد قيمة field", "B": "method تُحدِّد (تُعدِّل) قيمة private field", "C": "method تطبع قيمة field", "D": "method تُنشئ الـ class"}, "correct": "B", "exp": "الـ Setter هو method تُعدِّل قيمة private field، ويمكن أن تتضمن validation. تسمى عادةً set + اسم الـ field."}, {"id": 14, "topic": "Encapsulation", "q": "ما فائدة وضع validation داخل الـ Setter؟", "opts": {"A": "يجعل الكود أبطأ", "B": "يمنع تخزين قيم غير صالحة في الـ field", "C": "يسمح بالوصول المباشر للـ field", "D": "يلغي الحاجة للـ constructor"}, "correct": "B", "exp": "الـ validation في الـ setter يضمن أن القيم المخزنة صحيحة ومنطقية، مثل رفض طول سالب لـ Rectangle."}, {"id": 15, "topic": "Encapsulation", "q": "Data Hiding يعني...", "opts": {"A": "حذف البيانات من الذاكرة", "B": "تشفير البيانات", "C": "إخفاء تفاصيل التنفيذ الداخلية عن الـ classes الأخرى", "D": "نسخ البيانات في أماكن متعددة"}, "correct": "C", "exp": "Data Hiding يعني إخفاء الـ fields والتفاصيل الداخلية عن الـ classes الأخرى، وهو جزء أساسي من Encapsulation."}, {"id": 16, "topic": "Constructors", "q": "ما هو الـ Constructor في Java؟", "opts": {"A": "method عادية بـ return type", "B": "method خاصة تُستدعى تلقائياً عند إنشاء الكائن", "C": "متغير يُهيَّأ عند بدء البرنامج", "D": "نوع من أنواع الـ interfaces"}, "correct": "B", "exp": "الـ Constructor هو method خاصة باسم الـ class، لا يملك return type، ويُستدعى تلقائياً عند إنشاء الكائن بـ new."}, {"id": 17, "topic": "Constructors", "q": "ما الفرق بين الـ Default Constructor والـ No-arg Constructor؟", "opts": {"A": "لا فرق بينهما تماماً", "B": "Default يوفره Java تلقائياً إن لم تكتب أي constructor، No-arg تكتبه أنت بدون parameters", "C": "No-arg يوفره Java تلقائياً، Default تكتبه أنت", "D": "Default لا يمكن تعريفه يدوياً"}, "correct": "B", "exp": "Default constructor يوفره Java تلقائياً فقط إذا لم تكتب أي constructor. No-arg constructor هو constructor بدون parameters تكتبه أنت."}, {"id": 18, "topic": "Constructors", "q": "ماذا يحدث للـ Default Constructor إذا كتبت constructor واحد بـ parameters؟", "opts": {"A": "يبقى موجوداً", "B": "يُحذف تلقائياً من Java", "C": "يتحول لـ no-arg constructor", "D": "يُستدعى قبل الـ parameterized constructor"}, "correct": "B", "exp": "إذا كتبت أي constructor، يتوقف Java عن توفير الـ default constructor. يجب كتابة no-arg constructor يدوياً إذا أردته."}, {"id": 19, "topic": "Constructors", "q": "ما هو الـ Copy Constructor؟", "opts": {"A": "constructor ينسخ الـ class كاملاً", "B": "constructor يأخذ كائناً من نفس الـ class ويُنشئ نسخة منه", "C": "constructor يُنسخ من class آخر", "D": "constructor يُستخدم لنسخ الـ arrays"}, "correct": "B", "exp": "Copy Constructor هو constructor يستقبل كائناً من نفس الـ class كـ parameter ويُنشئ كائناً جديداً مستقلاً بنفس القيم."}, {"id": 20, "topic": "Constructors", "q": "ما هو Constructor Overloading؟", "opts": {"A": "استدعاء constructor من داخل constructor آخر", "B": "تعريف أكثر من constructor في نفس الـ class بـ parameters مختلفة", "C": "تجاوز (override) الـ constructor في الـ subclass", "D": "تعريف constructor في الـ interface"}, "correct": "B", "exp": "Constructor Overloading هو تعريف أكثر من constructor في نفس الـ class، لكل منها عدد أو أنواع مختلفة من الـ parameters."}, {"id": 21, "topic": "Static", "q": "ما خاصية الـ static field؟", "opts": {"A": "ينتمي لكائن معين", "B": "يُنشأ مع كل كائن جديد", "C": "مشترك بين جميع كائنات الـ class", "D": "لا يمكن تعديله"}, "correct": "C", "exp": "الـ static field (class variable) مشترك بين جميع كائنات الـ class — كلهم يرون نفس القيمة."}, {"id": 22, "topic": "Static", "q": "كيف تستدعي الـ static method؟", "opts": {"A": "ClassName.methodName()", "B": "objectName.methodName() فقط", "C": "static.methodName()", "D": "new ClassName.methodName()"}, "correct": "A", "exp": "الـ static method تُستدعى عبر اسم الـ class مباشرةً: ClassName.methodName()، لأنها لا ترتبط بكائن معين."}, {"id": 23, "topic": "Static", "q": "ما الذي لا تستطيع الـ static method فعله؟", "opts": {"A": "إجراء عمليات حسابية", "B": "الوصول المباشر لـ instance fields أو instance methods", "C": "إعادة قيمة", "D": "استقبال parameters"}, "correct": "B", "exp": "الـ static method لا ترتبط بكائن، لذا لا تستطيع الوصول المباشر لـ instance fields أو instance methods (غير static)."}, {"id": 24, "topic": "Static", "q": "أي استخدام يُعد مثالاً جيداً للـ static field؟", "opts": {"A": "اسم المستخدم", "B": "رصيد الحساب", "C": "عداد عدد الكائنات المُنشأة من الـ class", "D": "تاريخ الميلاد"}, "correct": "C", "exp": "عداد عدد الكائنات (instance count) مثال ممتاز للـ static field لأن قيمته مشتركة وتتغير مع كل كائن جديد."}, {"id": 25, "topic": "Inheritance", "q": "ما الكلمة المحجوزة لتعريف الـ inheritance في Java؟", "opts": {"A": "implements", "B": "inherits", "C": "extends", "D": "super"}, "correct": "C", "exp": "الـ inheritance في Java يُعرَّف بكلمة extends: public class Child extends Parent {}"}, {"id": 26, "topic": "Inheritance", "q": "ما هو مفهوم الـ is-a relationship؟", "opts": {"A": "الـ subclass يحتوي على الـ superclass", "B": "الـ subclass هو نوع من الـ superclass", "C": "الـ superclass يرث من الـ subclass", "D": "علاقة بين interface وclass"}, "correct": "B", "exp": "is-a تعني أن الـ subclass هو نوع من الـ superclass. مثلاً: SalariedEmployee is-a Employee."}, {"id": 27, "topic": "Inheritance", "q": "ما وظيفة الـ super keyword في الـ constructor؟", "opts": {"A": "إنشاء كائن جديد من الـ superclass", "B": "استدعاء constructor الـ superclass", "C": "الوصول لـ private fields الـ superclass", "D": "تجاوز method الـ superclass"}, "correct": "B", "exp": "super() في الـ constructor يستدعي constructor الـ superclass، ويجب أن يكون السطر الأول في الـ constructor."}, {"id": 28, "topic": "Inheritance", "q": "ماذا يرث الـ subclass من الـ superclass؟", "opts": {"A": "الـ private fields والـ methods فقط", "B": "الـ public وprotected fields والـ methods", "C": "كل شيء بما فيه الـ constructors", "D": "الـ static members فقط"}, "correct": "B", "exp": "الـ subclass يرث الـ public وprotected members. الـ private members لا تُورَّث مباشرة، والـ constructors لا تُورَّث أبداً."}, {"id": 29, "topic": "Inheritance", "q": "ما هو الـ Constructor Chaining في الـ inheritance؟", "opts": {"A": "تعريف أكثر من constructor في نفس الـ class", "B": "استدعاء سلسلة من constructors من الأعلى للأسفل عند إنشاء كائن", "C": "ربط constructors بـ interfaces", "D": "نسخ constructor من class لآخر"}, "correct": "B", "exp": "Constructor Chaining يعني أن عند إنشاء كائن من subclass، يُستدعى أولاً constructor الـ superclass، ثم constructor الـ subclass."}, {"id": 30, "topic": "Inheritance", "q": "هل يمكن لـ class في Java أن يرث من أكثر من class واحد مباشرةً؟", "opts": {"A": "نعم، يمكن ذلك", "B": "نعم، لكن بـ extends متعددة", "C": "لا، Java تدعم single inheritance فقط للـ classes", "D": "نعم، عبر الـ super keyword"}, "correct": "C", "exp": "Java لا تدعم multiple inheritance للـ classes (single inheritance فقط)، لكن يمكن تطبيق أكثر من interface."}, {"id": 31, "topic": "Method Overriding", "q": "ما هو الـ Method Overriding؟", "opts": {"A": "تعريف method بنفس الاسم لكن parameters مختلفة في نفس الـ class", "B": "إعادة تعريف method موجودة في الـ superclass داخل الـ subclass", "C": "تغيير return type الـ method", "D": "حذف method من الـ superclass"}, "correct": "B", "exp": "Overriding هو إعادة تعريف method بنفس الاسم ونفس الـ parameters من الـ superclass داخل الـ subclass لتغيير سلوكها."}, {"id": 32, "topic": "Method Overriding", "q": "ما وظيفة @Override annotation؟", "opts": {"A": "إجبارية لتشغيل الـ method", "B": "إخبار الـ compiler أنك تقصد override method من الـ superclass (يساعد في اكتشاف الأخطاء)", "C": "تجعل الـ method static", "D": "تمنع الـ subclass من override الـ method"}, "correct": "B", "exp": "@Override اختيارية لكن مُستحسنة. تُخبر الـ compiler بنيتك، فيُنبِّهك لو أخطأت في الاسم أو الـ parameters."}, {"id": 33, "topic": "Method Overriding", "q": "ما تأثير تعريف method كـ final في الـ superclass؟", "opts": {"A": "لا يمكن استدعاؤها", "B": "لا يمكن للـ subclass تجاوزها (override)", "C": "تصبح static تلقائياً", "D": "تصبح private تلقائياً"}, "correct": "B", "exp": "final method لا يمكن للـ subclass تجاوزها. إذا حاولت @Override لـ final method، يحدث Compilation Error."}, {"id": 34, "topic": "Method Overriding", "q": "كيف تستدعي الـ method الأصلية من الـ superclass بعد override؟", "opts": {"A": "parent.methodName()", "B": "super.methodName()", "C": "base.methodName()", "D": "original.methodName()"}, "correct": "B", "exp": "super.methodName() تستدعي نسخة الـ method في الـ superclass من داخل الـ subclass."}, {"id": 35, "topic": "Method Overriding", "q": "ما الفرق بين Overriding وOverloading؟", "opts": {"A": "لا فرق بينهما", "B": "Overriding في نفس الـ class، Overloading في subclass", "C": "Overriding يُغيِّر سلوك method موروثة، Overloading يُعرِّف methods بنفس الاسم وparameters مختلفة في نفس الـ class", "D": "Overloading يحتاج @Override"}, "correct": "C", "exp": "Overriding: إعادة تعريف method موروثة في subclass بنفس signature. Overloading: تعريف methods بنفس الاسم لكن parameters مختلفة في نفس الـ class."}, {"id": 36, "topic": "Abstract Classes", "q": "ما هو الـ Abstract Class؟", "opts": {"A": "class لا يحتوي على أي methods", "B": "class لا يمكن إنشاء instance منه مباشرةً وقد يحتوي abstract methods", "C": "class يرث من interface", "D": "class مع final keyword"}, "correct": "B", "exp": "Abstract class لا يمكن عمل new منه مباشرةً. يُستخدم كـ blueprint للـ subclasses ويمكن أن يحتوي abstract methods وconcrete methods."}, {"id": 37, "topic": "Abstract Classes", "q": "ما هي الـ Abstract Method؟", "opts": {"A": "method بدون return type", "B": "method مُعرَّفة بـ abstract keyword بدون body، يجب على الـ subclass تنفيذها", "C": "method يمكن استدعاؤها بدون كائن", "D": "method بـ private access modifier"}, "correct": "B", "exp": "Abstract method تُعرَّف بكلمة abstract ولا تملك body ({}). أي concrete subclass يجب أن يُطبِّقها."}, {"id": 38, "topic": "Abstract Classes", "q": "ماذا يجب على الـ subclass فعله إذا ورث abstract class؟", "opts": {"A": "لا يجب فعل شيء", "B": "تنفيذ (override) كل الـ abstract methods أو تكون abstract هي نفسها", "C": "تعريف constructor جديد فقط", "D": "تغيير اسم الـ class"}, "correct": "B", "exp": "إذا ورث subclass من abstract class، يجب أن يُنفِّذ كل الـ abstract methods، وإلا يجب إعلانه abstract أيضاً."}, {"id": 39, "topic": "Abstract Classes", "q": "هل يمكن أن يحتوي Abstract Class على concrete methods؟", "opts": {"A": "لا، يجب أن تكون كل methods فيه abstract", "B": "نعم، يمكن أن يحتوي على abstract وconcrete methods معاً", "C": "نعم، لكن concrete methods تكون static فقط", "D": "لا، لأنه لا يمكن إنشاء instance منه"}, "correct": "B", "exp": "Abstract class يمكن أن يحتوي على abstract methods (بدون body) وconcrete methods (بـ body) معاً."}, {"id": 40, "topic": "Abstract Classes", "q": "ما الفرق الرئيسي بين Abstract Class وInterface؟", "opts": {"A": "لا فرق بينهما في Java", "B": "Abstract class يمكن أن يحتوي على constructors وconcrete methods وfields، Interface فيها كل methods abstract افتراضياً", "C": "Interface تستخدم extends، Abstract class تستخدم implements", "D": "Abstract class لا يمكن أن يرث منه"}, "correct": "B", "exp": "Abstract class: يمكن constructors وconcrete methods وinstance fields. Interface: كل methods abstract بشكل افتراضي، وfields هي public static final."}, {"id": 41, "topic": "Interfaces", "q": "ما الكلمة المحجوزة لتطبيق interface في Java؟", "opts": {"A": "extends", "B": "inherits", "C": "implements", "D": "uses"}, "correct": "C", "exp": "الـ class يطبق الـ interface بكلمة implements: public class MyClass implements MyInterface {}"}, {"id": 42, "topic": "Interfaces", "q": "ما طبيعة الـ fields في الـ Interface؟", "opts": {"A": "private instance fields", "B": "public static final تلقائياً (ثوابت)", "C": "protected fields", "D": "يمكن تعريفها بأي access modifier"}, "correct": "B", "exp": "كل الـ fields في الـ interface هي تلقائياً public static final، أي ثوابت مشتركة لا يمكن تعديلها."}, {"id": 43, "topic": "Interfaces", "q": "هل يمكن لـ class أن يُطبِّق أكثر من interface؟", "opts": {"A": "لا، مثل الـ inheritance العادي", "B": "نعم، يمكن تطبيق أكثر من interface", "C": "نعم، لكن واحد فقط يُطبَّق فعلياً", "D": "لا، إلا في Java 8+"}, "correct": "B", "exp": "يمكن لـ class تطبيق أكثر من interface: public class MyClass implements A, B, C {} وهذا يعوض عدم دعم multiple inheritance."}, {"id": 44, "topic": "Interfaces", "q": "ما هي الـ Default Method في الـ Interface؟", "opts": {"A": "method بدون body في الـ interface", "B": "method مُعرَّفة بكلمة default في الـ interface ولها body (تنفيذ افتراضي)", "C": "أول method في الـ interface", "D": "method تُستدعى تلقائياً"}, "correct": "B", "exp": "Default method (Java 8+) هي method في الـ interface لها تنفيذ افتراضي. الـ class يمكنه استخدامها كما هي أو override."}, {"id": 45, "topic": "Interfaces", "q": "هل يمكن إنشاء instance من interface مباشرةً؟", "opts": {"A": "نعم", "B": "نعم، لكن بـ new keyword خاص", "C": "لا، لا يمكن إنشاء instance من interface", "D": "نعم، إذا كانت كل methods لها default implementation"}, "correct": "C", "exp": "لا يمكن إنشاء instance من interface مباشرةً. يجب إنشاء instance من class يُطبِّق الـ interface."}, {"id": 46, "topic": "Polymorphism", "q": "ما معنى Polymorphism في Java؟", "opts": {"A": "إنشاء أكثر من كائن من نفس الـ class", "B": "قدرة الكائنات من أنواع مختلفة على الاستجابة لنفس الرسالة بطرق مختلفة", "C": "تعريف متغيرات متعددة", "D": "تشغيل البرنامج على أنظمة مختلفة"}, "correct": "B", "exp": "Polymorphism يعني أن reference واحد يمكن أن يُشير لأنواع مختلفة من الكائنات، وكل نوع يستجيب بطريقته الخاصة."}, {"id": 47, "topic": "Polymorphism", "q": "ما هو Dynamic Method Dispatch؟", "opts": {"A": "استدعاء method وقت التجميع", "B": "تحديد الـ method المُستدعاة وقت التشغيل بناءً على النوع الفعلي للكائن", "C": "تحديد الـ method بناءً على نوع المتغير", "D": "إرسال method لـ class آخر"}, "correct": "B", "exp": "Dynamic Dispatch يعني أن Java تحدد الـ method المُستدعاة وقت التشغيل (runtime) بناءً على النوع الفعلي للكائن، وليس نوع المتغير."}, {"id": 48, "topic": "Polymorphism", "q": "في Polymorphism، إذا كان المتغير من نوع Animal ويُشير لكائن Dog، أي getSalary method تُستدعى؟", "opts": {"A": "Animal.makeSound()", "B": "Dog.makeSound()", "C": "يحدث Compilation Error", "D": "يعتمد على الـ access modifier"}, "correct": "B", "exp": "بسبب Dynamic Dispatch، تُستدعى Dog.makeSound() — الـ method الخاصة بالنوع الفعلي للكائن (Dog) وليس نوع المتغير (Animal)."}, {"id": 49, "topic": "Polymorphism", "q": "ما هو الـ Casting في Polymorphism؟", "opts": {"A": "تحويل نوع البيانات الأساسية", "B": "تحويل reference من نوع لآخر — upcasting (ضمني) أو downcasting (صريح)", "C": "نسخ الكائن", "D": "حذف الكائن من الذاكرة"}, "correct": "B", "exp": "Upcasting (تلقائي): Parent ref = new Child(). Downcasting (صريح): Child c = (Child) parentRef — قد يُسبب ClassCastException إذا كان النوع غير صحيح."}, {"id": 50, "topic": "Polymorphism", "q": "ما هو الـ ClassCastException؟", "opts": {"A": "خطأ عند تعريف class خاطئ", "B": "خطأ وقت التشغيل عند محاولة casting كائن لنوع غير متوافق", "C": "خطأ في تجميع الـ class", "D": "خطأ في استدعاء constructor"}, "correct": "B", "exp": "ClassCastException يحدث وقت التشغيل (Runtime) عند محاولة casting كائن لنوع لا ينتمي إليه فعلاً، مثل: Dog d = (Dog) new Cat();"}];
+const COMP = [{"id": 1, "title": "نظام إدارة الموظفين", "subtitle": "Abstract + Interface + Enum + Static + Inheritance + ArrayList + Exception", "question": "ادرس الـ UML التالي ثم:\n1. اكتب كود Java كامل لكل الـ classes\n2. في الـ main: أنشئ ArrayList<Person> واستخدم Polymorphism\n3. طبّق Exception Handling في setRating()\n4. استخدم static method لعدد الموظفين", "uml_nodes": [{"type": "enum", "name": "Department", "color": "#0e4d6e", "border": "#1e90d4", "values": ["HR", "IT", "FINANCE", "MARKETING"]}, {"type": "interface", "name": "Payable", "color": "#2d1b4e", "border": "#9b59b6", "methods": ["+ calculatePay() : double", "+ printPaySlip() : void"]}, {"type": "abstract", "name": "Person", "color": "#4a1060", "border": "#c678dd", "fields": ["- name : String", "- age : int", "«static» - count : int"], "methods": ["+ Person(name,age)", "+ Person(other) «copy»", "+ getters & setters", "«static» + getCount() : int", "+ displayInfo() : void {abstract}"]}, {"type": "class", "name": "Employee", "color": "#4a2800", "border": "#e67e22", "fields": ["- employeeId : int", "- basicSalary : double", "- dept : Department", "- rating : double"], "methods": ["+ Employee(name,age,id,salary,dept)", "+ calculatePay() : double «@Override»", "+ printPaySlip() : void «@Override»", "+ setRating(r:double) : void «throws IAE»", "+ displayInfo() : void «@Override»", "+ getBasicSalary() : double"]}, {"type": "class", "name": "Manager", "color": "#1a3d1a", "border": "#27ae60", "fields": ["- bonus : double", "- team : ArrayList<Employee>"], "methods": ["+ Manager(name,age,id,sal,dept,bonus)", "+ calculatePay() : double «@Override»", "+ addToTeam(e:Employee) : void", "+ displayTeam() : void", "+ displayInfo() : void «@Override»"]}], "relations": [{"from": "Employee", "to": "Person", "type": "extends"}, {"from": "Employee", "to": "Payable", "type": "implements"}, {"from": "Manager", "to": "Employee", "type": "extends"}, {"from": "Employee", "to": "Department", "type": "uses"}], "main_hint": "ArrayList<Person> → Polymorphism\nException Handling في setRating()", "code": "import java.util.ArrayList;\n\npublic enum Department { HR, IT, FINANCE, MARKETING }\n\npublic interface Payable {\n    double calculatePay();\n    void printPaySlip();\n}\n\npublic abstract class Person {\n    private String name;\n    private int age;\n    private static int count = 0;\n\n    public Person(String name, int age) {\n        this.name = name; this.age = age; count++;\n    }\n    public Person(Person other) {          // copy constructor\n        this.name = other.name; this.age = other.age; count++;\n    }\n    public String getName()       { return name; }\n    public int    getAge()        { return age;  }\n    public void   setName(String n){ name = n;   }\n    public void   setAge(int a)   { age = a;     }\n    public static int getCount()  { return count;}\n    public abstract void displayInfo();\n}\n\npublic class Employee extends Person implements Payable {\n    private int        employeeId;\n    private double     basicSalary;\n    private Department dept;\n    private double     rating;\n\n    public Employee(String name,int age,int id,double salary,Department dept){\n        super(name,age);\n        this.employeeId  = id;\n        this.basicSalary = salary;\n        this.dept        = dept;\n        this.rating      = 3.0;\n    }\n    public void setRating(double r) {\n        if (r < 1.0 || r > 5.0)\n            throw new IllegalArgumentException(\"Rating must be 1.0-5.0\");\n        this.rating = r;\n    }\n    @Override public double calculatePay()  { return basicSalary * rating / 3.0; }\n    @Override public void   printPaySlip()  {\n        System.out.println(\"=== Pay Slip: \" + getName() +\n            \" | Dept: \" + dept + \" | Pay: $\" + calculatePay());\n    }\n    @Override public void displayInfo() {\n        System.out.println(\"Employee[\" + employeeId + \"] \" + getName() +\n            \" age=\" + getAge() + \" dept=\" + dept);\n    }\n    public double getBasicSalary() { return basicSalary; }\n}\n\npublic class Manager extends Employee {\n    private double             bonus;\n    private ArrayList<Employee> team = new ArrayList<>();\n\n    public Manager(String name,int age,int id,double sal,Department dept,double bonus){\n        super(name,age,id,sal,dept);\n        this.bonus = bonus;\n    }\n    @Override public double calculatePay() { return super.calculatePay() + bonus; }\n    public void addToTeam(Employee e)      { team.add(e); }\n    public void displayTeam() {\n        System.out.println(\"Team of \" + getName() + \":\");\n        for (Employee e : team) e.displayInfo();\n    }\n    @Override public void displayInfo() {\n        super.displayInfo();\n        System.out.println(\"  Role: Manager | Bonus: $\" + bonus);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<Person> staff = new ArrayList<>();\n        Manager  mgr = new Manager(\"Sara\",40,1,5000,Department.IT,2000);\n        Employee e1  = new Employee(\"Ali\",28,2,3000,Department.IT);\n        Employee e2  = new Employee(\"Mona\",32,3,3500,Department.HR);\n\n        try {\n            e1.setRating(4.5);\n            e2.setRating(8.0);   // throws exception\n        } catch (IllegalArgumentException ex) {\n            System.out.println(\"Error: \" + ex.getMessage());\n        }\n\n        mgr.addToTeam(e1); mgr.addToTeam(e2);\n        staff.add(mgr); staff.add(e1); staff.add(e2);\n\n        for (Person p : staff) p.displayInfo();    // Polymorphism\n        System.out.println(\"Total persons: \" + Person.getCount());\n    }\n}"}, {"id": 2, "title": "نظام المكتبة", "subtitle": "Abstract + Interface + Enum + Copy Constructor + ArrayList + Exception", "question": "ادرس الـ UML التالي ثم:\n1. اكتب كود Java كامل لكل الـ classes\n2. في الـ main: أنشئ ArrayList<LibraryItem> واستخدم Polymorphism\n3. طبّق Copy Constructor للـ Book\n4. استخدم Exception عند الاستعارة", "uml_nodes": [{"type": "enum", "name": "Genre", "color": "#0e4d6e", "border": "#1e90d4", "values": ["FICTION", "SCIENCE", "HISTORY", "TECHNOLOGY"]}, {"type": "interface", "name": "Borrowable", "color": "#2d1b4e", "border": "#9b59b6", "methods": ["+ borrow(memberId:int) : void", "+ returnItem() : void", "+ isAvailable() : boolean"]}, {"type": "abstract", "name": "LibraryItem", "color": "#4a1060", "border": "#c678dd", "fields": ["- itemId : int", "- title : String", "- available : boolean", "«static» - totalItems : int"], "methods": ["+ LibraryItem(id,title)", "+ getTitle() : String", "+ isAvailable() : boolean", "«static» + getTotalItems() : int", "+ getInfo() : String {abstract}"]}, {"type": "class", "name": "Book", "color": "#4a2800", "border": "#e67e22", "fields": ["- author : String", "- genre : Genre", "- pages : int"], "methods": ["+ Book(id,title,author,genre,pages)", "+ Book(other:Book) «copy»", "+ borrow(memberId:int) : void «@Override»", "+ returnItem() : void «@Override»", "+ getInfo() : String «@Override»"]}, {"type": "class", "name": "DVD", "color": "#1a3d1a", "border": "#27ae60", "fields": ["- director : String", "- durationMins : int"], "methods": ["+ DVD(id,title,director,mins)", "+ borrow(memberId:int) : void «@Override»", "+ returnItem() : void «@Override»", "+ getInfo() : String «@Override»"]}], "relations": [{"from": "Book", "to": "LibraryItem", "type": "extends"}, {"from": "DVD", "to": "LibraryItem", "type": "extends"}, {"from": "Book", "to": "Borrowable", "type": "implements"}, {"from": "DVD", "to": "Borrowable", "type": "implements"}, {"from": "Book", "to": "Genre", "type": "uses"}], "main_hint": "ArrayList<LibraryItem> → Polymorphism\nException عند استعارة item غير متاح", "code": "import java.util.ArrayList;\n\npublic enum Genre { FICTION, SCIENCE, HISTORY, TECHNOLOGY }\n\npublic interface Borrowable {\n    void borrow(int memberId);\n    void returnItem();\n    boolean isAvailable();\n}\n\npublic abstract class LibraryItem {\n    private int     itemId;\n    private String  title;\n    private boolean available = true;\n    private static  int totalItems = 0;\n\n    public LibraryItem(int id, String title) {\n        this.itemId = id; this.title = title; totalItems++;\n    }\n    public String  getTitle()               { return title;     }\n    public boolean isAvailable()            { return available; }\n    protected void setAvailable(boolean a)  { available = a;    }\n    public static int getTotalItems()       { return totalItems;}\n    public int getItemId()                  { return itemId;    }\n    public abstract String getInfo();\n}\n\npublic class Book extends LibraryItem implements Borrowable {\n    private String author;\n    private Genre  genre;\n    private int    pages;\n\n    public Book(int id, String title, String author, Genre genre, int pages){\n        super(id, title);\n        this.author = author; this.genre = genre; this.pages = pages;\n    }\n    public Book(Book other) {      // copy constructor\n        super(other.getItemId(), other.getTitle());\n        this.author = other.author;\n        this.genre  = other.genre;\n        this.pages  = other.pages;\n    }\n    @Override public void borrow(int memberId) {\n        if (!isAvailable())\n            throw new IllegalStateException(\"Book not available\");\n        setAvailable(false);\n        System.out.println(\"Book '\" + getTitle() + \"' borrowed by member \" + memberId);\n    }\n    @Override public void returnItem() {\n        setAvailable(true);\n        System.out.println(\"Book '\" + getTitle() + \"' returned.\");\n    }\n    @Override public String getInfo() {\n        return \"Book[\" + getItemId() + \"] \" + getTitle() + \" by \" + author + \" | \" + genre;\n    }\n}\n\npublic class DVD extends LibraryItem implements Borrowable {\n    private String director;\n    private int    durationMins;\n\n    public DVD(int id, String title, String director, int mins) {\n        super(id, title);\n        this.director = director; this.durationMins = mins;\n    }\n    @Override public void borrow(int memberId) {\n        if (!isAvailable())\n            throw new IllegalStateException(\"DVD not available\");\n        setAvailable(false);\n        System.out.println(\"DVD '\" + getTitle() + \"' borrowed by member \" + memberId);\n    }\n    @Override public void returnItem() {\n        setAvailable(true);\n        System.out.println(\"DVD '\" + getTitle() + \"' returned.\");\n    }\n    @Override public String getInfo() {\n        return \"DVD[\" + getItemId() + \"] \" + getTitle() + \" dir: \" + director + \" \" + durationMins + \"min\";\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<LibraryItem> catalog = new ArrayList<>();\n        Book b1 = new Book(1,\"Clean Code\",\"Robert Martin\",Genre.TECHNOLOGY,431);\n        Book b2 = new Book(b1);   // copy constructor\n        DVD  d1 = new DVD(3,\"Inception\",\"Nolan\",148);\n\n        catalog.add(b1); catalog.add(b2); catalog.add(d1);\n\n        for (LibraryItem item : catalog)\n            System.out.println(item.getInfo());   // Polymorphism\n\n        try {\n            b1.borrow(101);\n            b1.borrow(102);   // throws: not available\n        } catch (IllegalStateException e) {\n            System.out.println(\"Error: \" + e.getMessage());\n        }\n        System.out.println(\"Total items: \" + LibraryItem.getTotalItems());\n    }\n}"}, {"id": 3, "title": "نظام المركبات", "subtitle": "Abstract + Multiple Interfaces + Enum + Static + Polymorphism", "question": "ادرس الـ UML التالي ثم:\n1. اكتب كود Java كامل لكل الـ classes\n2. في الـ main: استخدم Polymorphism مع Array من Vehicles\n3. طبّق Multiple Interfaces\n4. استخدم Enum للوقود و static لعداد المركبات", "uml_nodes": [{"type": "enum", "name": "FuelType", "color": "#0e4d6e", "border": "#1e90d4", "values": ["PETROL", "DIESEL", "ELECTRIC", "HYBRID"]}, {"type": "interface", "name": "Registerable", "color": "#2d1b4e", "border": "#9b59b6", "methods": ["+ register() : String", "+ getPlateNumber() : String"]}, {"type": "interface", "name": "Insurable", "color": "#1a3d4a", "border": "#17a2b8", "methods": ["+ calculateInsurance() : double", "+ getInsuranceType() : String"]}, {"type": "abstract", "name": "Vehicle", "color": "#4a1060", "border": "#c678dd", "fields": ["- brand : String", "- model : String", "- year : int", "- fuelType : FuelType", "«static» - vehicleCount : int"], "methods": ["+ Vehicle(brand,model,year,fuel)", "+ getters()", "«static» + getVehicleCount() : int", "+ getFuelCost() : double {abstract}", "+ displayInfo() : void {abstract}"]}, {"type": "class", "name": "Car", "color": "#4a2800", "border": "#e67e22", "fields": ["- numDoors : int", "- plateNumber : String"], "methods": ["+ Car(brand,model,year,fuel,doors,plate)", "+ getFuelCost() : double «@Override»", "+ register() : String «@Override»", "+ getPlateNumber() : String «@Override»", "+ calculateInsurance() : double «@Override»", "+ getInsuranceType() : String «@Override»", "+ displayInfo() : void «@Override»"]}, {"type": "class", "name": "Truck", "color": "#1a3d1a", "border": "#27ae60", "fields": ["- payloadTons : double", "- plateNumber : String"], "methods": ["+ Truck(brand,model,year,fuel,payload,plate)", "+ getFuelCost() : double «@Override»", "+ register() : String «@Override»", "+ calculateInsurance() : double «@Override»", "+ getInsuranceType() : String «@Override»", "+ displayInfo() : void «@Override»"]}], "relations": [{"from": "Car", "to": "Vehicle", "type": "extends"}, {"from": "Truck", "to": "Vehicle", "type": "extends"}, {"from": "Car", "to": "Registerable", "type": "implements"}, {"from": "Car", "to": "Insurable", "type": "implements"}, {"from": "Truck", "to": "Registerable", "type": "implements"}, {"from": "Truck", "to": "Insurable", "type": "implements"}, {"from": "Vehicle", "to": "FuelType", "type": "uses"}], "main_hint": "Vehicle[] → Polymorphism\nRegisterable & Insurable interfaces", "code": "public enum FuelType { PETROL, DIESEL, ELECTRIC, HYBRID }\n\npublic interface Registerable {\n    String register();\n    String getPlateNumber();\n}\n\npublic interface Insurable {\n    double calculateInsurance();\n    String getInsuranceType();\n}\n\npublic abstract class Vehicle {\n    private String   brand, model;\n    private int      year;\n    private FuelType fuelType;\n    private static int vehicleCount = 0;\n\n    public Vehicle(String brand,String model,int year,FuelType fuel){\n        this.brand=brand; this.model=model;\n        this.year=year;   this.fuelType=fuel;\n        vehicleCount++;\n    }\n    public String   getBrand()               { return brand;        }\n    public String   getModel()               { return model;        }\n    public int      getYear()                { return year;         }\n    public FuelType getFuelType()            { return fuelType;     }\n    public static int getVehicleCount()      { return vehicleCount; }\n    public abstract double getFuelCost();\n    public abstract void   displayInfo();\n}\n\npublic class Car extends Vehicle implements Registerable, Insurable {\n    private int    numDoors;\n    private String plateNumber;\n\n    public Car(String brand,String model,int year,FuelType fuel,int doors,String plate){\n        super(brand,model,year,fuel);\n        this.numDoors=doors; this.plateNumber=plate;\n    }\n    @Override public double getFuelCost() {\n        return getFuelType()==FuelType.ELECTRIC ? 50.0 : 120.0;\n    }\n    @Override public String register()        { return \"CAR-REG-\"+plateNumber; }\n    @Override public String getPlateNumber()  { return plateNumber; }\n    @Override public double calculateInsurance(){ return 800.0 + (numDoors*50); }\n    @Override public String getInsuranceType() { return \"Comprehensive\"; }\n    @Override public void displayInfo() {\n        System.out.println(\"Car: \"+getBrand()+\" \"+getModel()+\" (\"+getYear()+\n            \") Fuel:\"+getFuelType()+\" Doors:\"+numDoors+\" Plate:\"+plateNumber);\n    }\n}\n\npublic class Truck extends Vehicle implements Registerable, Insurable {\n    private double payloadTons;\n    private String plateNumber;\n\n    public Truck(String brand,String model,int year,FuelType fuel,double payload,String plate){\n        super(brand,model,year,fuel);\n        this.payloadTons=payload; this.plateNumber=plate;\n    }\n    @Override public double getFuelCost()      { return 250.0 * payloadTons; }\n    @Override public String register()         { return \"TRUCK-REG-\"+plateNumber; }\n    @Override public String getPlateNumber()   { return plateNumber; }\n    @Override public double calculateInsurance(){ return 2000.0 + (payloadTons*300); }\n    @Override public String getInsuranceType() { return \"Commercial\"; }\n    @Override public void displayInfo() {\n        System.out.println(\"Truck: \"+getBrand()+\" \"+getModel()+\n            \" Payload:\"+payloadTons+\"t Plate:\"+plateNumber);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Vehicle[] vehicles = {\n            new Car(\"Toyota\",\"Camry\",2022,FuelType.PETROL,4,\"ABC-123\"),\n            new Car(\"Tesla\",\"Model3\",2023,FuelType.ELECTRIC,4,\"EV-999\"),\n            new Truck(\"Volvo\",\"FH16\",2021,FuelType.DIESEL,20.0,\"TRK-456\")\n        };\n        for (Vehicle v : vehicles) {\n            v.displayInfo();\n            System.out.println(\"  Fuel Cost: $\" + v.getFuelCost());\n            if (v instanceof Registerable)\n                System.out.println(\"  Reg: \" + ((Registerable)v).register());\n            if (v instanceof Insurable)\n                System.out.println(\"  Insurance: $\" + ((Insurable)v).calculateInsurance());\n        }\n        System.out.println(\"Total vehicles: \" + Vehicle.getVehicleCount());\n    }\n}"}, {"id": 4, "title": "نظام المستشفى", "subtitle": "Abstract + Interface + Enum + Overloading + Exception + ArrayList", "question": "ادرس الـ UML التالي ثم:\n1. اكتب كود Java كامل لكل الـ classes\n2. طبّق Method Overloading في prescribe()\n3. استخدم Exception عند إضافة مريض\n4. في الـ main: ArrayList<Patient> مع Polymorphism", "uml_nodes": [{"type": "enum", "name": "BloodType", "color": "#0e4d6e", "border": "#1e90d4", "values": ["A_POS", "A_NEG", "B_POS", "B_NEG", "O_POS", "O_NEG", "AB_POS", "AB_NEG"]}, {"type": "interface", "name": "Treatable", "color": "#2d1b4e", "border": "#9b59b6", "methods": ["+ prescribe(med:String) : void", "+ prescribe(med:String,dose:int) : void", "+ getRecord() : String"]}, {"type": "abstract", "name": "Patient", "color": "#4a1060", "border": "#c678dd", "fields": ["- patientId : int", "- name : String", "- age : int", "- bloodType : BloodType", "«static» - patientCount : int"], "methods": ["+ Patient(id,name,age,blood)", "+ getters()", "«static» + getPatientCount() : int", "+ diagnose() : String {abstract}", "+ displayInfo() : void {abstract}"]}, {"type": "class", "name": "InPatient", "color": "#4a2800", "border": "#e67e22", "fields": ["- roomNumber : int", "- admissionDate : String", "- dailyRate : double", "- medications : ArrayList<String>"], "methods": ["+ InPatient(id,name,age,blood,room,date,rate)", "+ prescribe(med:String) : void «@Override»", "+ prescribe(med:String,dose:int) : void «@Override»", "+ getRecord() : String «@Override»", "+ diagnose() : String «@Override»", "+ displayInfo() : void «@Override»", "+ calculateBill(days:int) : double"]}, {"type": "class", "name": "OutPatient", "color": "#1a3d1a", "border": "#27ae60", "fields": ["- appointmentDate : String", "- consultationFee : double", "- medications : ArrayList<String>"], "methods": ["+ OutPatient(id,name,age,blood,date,fee)", "+ prescribe(med:String) : void «@Override»", "+ prescribe(med:String,dose:int) : void «@Override»", "+ getRecord() : String «@Override»", "+ diagnose() : String «@Override»", "+ displayInfo() : void «@Override»"]}], "relations": [{"from": "InPatient", "to": "Patient", "type": "extends"}, {"from": "OutPatient", "to": "Patient", "type": "extends"}, {"from": "InPatient", "to": "Treatable", "type": "implements"}, {"from": "OutPatient", "to": "Treatable", "type": "implements"}, {"from": "Patient", "to": "BloodType", "type": "uses"}], "main_hint": "ArrayList<Patient> → Polymorphism\nMethod Overloading في prescribe()\nException عند age < 0", "code": "import java.util.ArrayList;\n\npublic enum BloodType { A_POS, A_NEG, B_POS, B_NEG, O_POS, O_NEG, AB_POS, AB_NEG }\n\npublic interface Treatable {\n    void   prescribe(String med);\n    void   prescribe(String med, int doseMg);\n    String getRecord();\n}\n\npublic abstract class Patient {\n    private int       patientId;\n    private String    name;\n    private int       age;\n    private BloodType bloodType;\n    private static int patientCount = 0;\n\n    public Patient(int id, String name, int age, BloodType blood) {\n        if (age < 0) throw new IllegalArgumentException(\"Age cannot be negative\");\n        this.patientId = id; this.name = name;\n        this.age = age;      this.bloodType = blood;\n        patientCount++;\n    }\n    public int       getPatientId()         { return patientId;    }\n    public String    getName()              { return name;         }\n    public int       getAge()               { return age;          }\n    public BloodType getBloodType()         { return bloodType;    }\n    public static int getPatientCount()     { return patientCount; }\n    public abstract String diagnose();\n    public abstract void   displayInfo();\n}\n\npublic class InPatient extends Patient implements Treatable {\n    private int              roomNumber;\n    private String           admissionDate;\n    private double           dailyRate;\n    private ArrayList<String> medications = new ArrayList<>();\n\n    public InPatient(int id,String name,int age,BloodType blood,\n                     int room,String date,double rate){\n        super(id,name,age,blood);\n        this.roomNumber=room; this.admissionDate=date; this.dailyRate=rate;\n    }\n    @Override public void prescribe(String med) {\n        medications.add(med);\n        System.out.println(\"Prescribed: \" + med);\n    }\n    @Override public void prescribe(String med, int doseMg) {\n        medications.add(med + \" \" + doseMg + \"mg\");\n        System.out.println(\"Prescribed: \" + med + \" \" + doseMg + \"mg\");\n    }\n    @Override public String getRecord() {\n        return \"InPatient[\" + getPatientId() + \"] Room:\" + roomNumber +\n               \" Meds:\" + medications;\n    }\n    @Override public String diagnose() { return \"In-hospital observation required\"; }\n    @Override public void displayInfo() {\n        System.out.println(\"InPatient: \" + getName() + \" age=\" + getAge() +\n            \" blood=\" + getBloodType() + \" room=\" + roomNumber);\n    }\n    public double calculateBill(int days) { return days * dailyRate; }\n}\n\npublic class OutPatient extends Patient implements Treatable {\n    private String            appointmentDate;\n    private double            consultationFee;\n    private ArrayList<String> medications = new ArrayList<>();\n\n    public OutPatient(int id,String name,int age,BloodType blood,String date,double fee){\n        super(id,name,age,blood);\n        this.appointmentDate=date; this.consultationFee=fee;\n    }\n    @Override public void prescribe(String med) { medications.add(med); }\n    @Override public void prescribe(String med, int doseMg) {\n        medications.add(med + \" \" + doseMg + \"mg\");\n    }\n    @Override public String getRecord() {\n        return \"OutPatient[\" + getPatientId() + \"] Appt:\" + appointmentDate +\n               \" Fee:$\" + consultationFee + \" Meds:\" + medications;\n    }\n    @Override public String diagnose() { return \"Follow-up appointment scheduled\"; }\n    @Override public void displayInfo() {\n        System.out.println(\"OutPatient: \" + getName() + \" age=\" + getAge() +\n            \" blood=\" + getBloodType() + \" appt=\" + appointmentDate);\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<Patient> patients = new ArrayList<>();\n        try {\n            InPatient  ip = new InPatient(1,\"Ahmed\",45,BloodType.A_POS,301,\"2024-01-10\",500);\n            OutPatient op = new OutPatient(2,\"Sara\",30,BloodType.O_NEG,\"2024-01-11\",150);\n            OutPatient bad = new OutPatient(3,\"X\",-1,BloodType.B_POS,\"2024-01-12\",100);\n        } catch (IllegalArgumentException e) {\n            System.out.println(\"Error: \" + e.getMessage());\n        }\n\n        InPatient ip = new InPatient(1,\"Ahmed\",45,BloodType.A_POS,301,\"2024-01-10\",500);\n        ip.prescribe(\"Paracetamol\");\n        ip.prescribe(\"Amoxicillin\", 500);\n\n        patients.add(ip);\n        patients.add(new OutPatient(2,\"Sara\",30,BloodType.O_NEG,\"2024-01-11\",150));\n\n        for (Patient p : patients) {\n            p.displayInfo();\n            System.out.println(\"  Diagnosis: \" + p.diagnose());\n        }\n        System.out.println(\"Total patients: \" + Patient.getPatientCount());\n    }\n}"}, {"id": 5, "title": "نظام الجامعة", "subtitle": "Abstract + Interface + Enum + Copy Constructor + Static + ArrayList + Exception + Overriding", "question": "ادرس الـ UML التالي ثم:\n1. اكتب كود Java كامل لكل الـ classes\n2. طبّق Copy Constructor للـ Course\n3. استخدم Exception عند إضافة grade\n4. في الـ main: Polymorphism + static counter + enum", "uml_nodes": [{"type": "enum", "name": "Faculty", "color": "#0e4d6e", "border": "#1e90d4", "values": ["ENGINEERING", "SCIENCE", "ARTS", "BUSINESS", "MEDICINE"]}, {"type": "interface", "name": "Gradable", "color": "#2d1b4e", "border": "#9b59b6", "methods": ["+ addGrade(grade:double) : void", "+ getGPA() : double", "+ getLetterGrade() : String"]}, {"type": "abstract", "name": "Person", "color": "#4a1060", "border": "#c678dd", "fields": ["- name : String", "- nationalId : String", "«static» - personCount : int"], "methods": ["+ Person(name,nationalId)", "+ getters()", "«static» + getPersonCount() : int", "+ getRole() : String {abstract}", "+ displayInfo() : void {abstract}"]}, {"type": "class", "name": "Course", "color": "#1a3d4a", "border": "#17a2b8", "fields": ["- courseCode : String", "- courseName : String", "- creditHours : int", "- faculty : Faculty"], "methods": ["+ Course(code,name,credits,faculty)", "+ Course(other:Course) «copy»", "+ getters()", "+ toString() : String"]}, {"type": "class", "name": "Student", "color": "#4a2800", "border": "#e67e22", "fields": ["- studentId : String", "- faculty : Faculty", "- courses : ArrayList<Course>", "- grades : ArrayList<Double>"], "methods": ["+ Student(name,nationalId,studentId,faculty)", "+ addGrade(grade:double) : void «@Override»", "+ getGPA() : double «@Override»", "+ getLetterGrade() : String «@Override»", "+ enrollCourse(c:Course) : void", "+ getRole() : String «@Override»", "+ displayInfo() : void «@Override»"]}, {"type": "class", "name": "Professor", "color": "#1a3d1a", "border": "#27ae60", "fields": ["- employeeId : String", "- faculty : Faculty", "- coursesTaught : ArrayList<Course>", "- salary : double"], "methods": ["+ Professor(name,nationalId,empId,faculty,salary)", "+ addGrade(grade:double) : void «@Override»", "+ getGPA() : double «@Override»", "+ getLetterGrade() : String «@Override»", "+ assignCourse(c:Course) : void", "+ getRole() : String «@Override»", "+ displayInfo() : void «@Override»"]}], "relations": [{"from": "Student", "to": "Person", "type": "extends"}, {"from": "Professor", "to": "Person", "type": "extends"}, {"from": "Student", "to": "Gradable", "type": "implements"}, {"from": "Professor", "to": "Gradable", "type": "implements"}, {"from": "Student", "to": "Course", "type": "uses"}, {"from": "Professor", "to": "Course", "type": "uses"}, {"from": "Student", "to": "Faculty", "type": "uses"}, {"from": "Professor", "to": "Faculty", "type": "uses"}], "main_hint": "ArrayList<Person> → Polymorphism\nCopy Constructor للـ Course\nException عند grade < 0 أو > 100", "code": "import java.util.ArrayList;\n\npublic enum Faculty { ENGINEERING, SCIENCE, ARTS, BUSINESS, MEDICINE }\n\npublic interface Gradable {\n    void   addGrade(double grade);\n    double getGPA();\n    String getLetterGrade();\n}\n\npublic abstract class Person {\n    private String name;\n    private String nationalId;\n    private static int personCount = 0;\n\n    public Person(String name, String nationalId) {\n        this.name = name; this.nationalId = nationalId; personCount++;\n    }\n    public String getName()             { return name;        }\n    public String getNationalId()       { return nationalId;  }\n    public static int getPersonCount()  { return personCount; }\n    public abstract String getRole();\n    public abstract void   displayInfo();\n}\n\npublic class Course {\n    private String  courseCode, courseName;\n    private int     creditHours;\n    private Faculty faculty;\n\n    public Course(String code, String name, int credits, Faculty faculty) {\n        this.courseCode=code; this.courseName=name;\n        this.creditHours=credits; this.faculty=faculty;\n    }\n    public Course(Course other) {    // copy constructor\n        this.courseCode=other.courseCode; this.courseName=other.courseName;\n        this.creditHours=other.creditHours; this.faculty=other.faculty;\n    }\n    public String  getCourseCode()  { return courseCode;  }\n    public String  getCourseName()  { return courseName;  }\n    public int     getCreditHours() { return creditHours; }\n    public Faculty getFaculty()     { return faculty;     }\n    @Override public String toString() {\n        return courseCode + \": \" + courseName + \" (\" + creditHours + \" cr) [\" + faculty + \"]\";\n    }\n}\n\npublic class Student extends Person implements Gradable {\n    private String            studentId;\n    private Faculty           faculty;\n    private ArrayList<Course> courses = new ArrayList<>();\n    private ArrayList<Double> grades  = new ArrayList<>();\n\n    public Student(String name,String natId,String stuId,Faculty faculty){\n        super(name,natId); this.studentId=stuId; this.faculty=faculty;\n    }\n    @Override public void addGrade(double g) {\n        if (g<0||g>100) throw new IllegalArgumentException(\"Grade must be 0-100: \"+g);\n        grades.add(g);\n    }\n    @Override public double getGPA() {\n        if (grades.isEmpty()) return 0.0;\n        double sum=0; for(double g:grades) sum+=g;\n        return (sum/grades.size())/25.0;   // convert to 4.0 scale\n    }\n    @Override public String getLetterGrade() {\n        double gpa=getGPA();\n        if(gpa>=3.7)return \"A\"; if(gpa>=3.0)return \"B\";\n        if(gpa>=2.0)return \"C\"; if(gpa>=1.0)return \"D\"; return \"F\";\n    }\n    public void enrollCourse(Course c) { courses.add(c); }\n    @Override public String getRole()  { return \"Student\"; }\n    @Override public void displayInfo(){\n        System.out.println(\"Student[\"+studentId+\"] \"+getName()+\n            \" faculty=\"+faculty+\" GPA=\"+String.format(\"%.2f\",getGPA())+\n            \" (\"+getLetterGrade()+\") courses=\"+courses.size());\n    }\n}\n\npublic class Professor extends Person implements Gradable {\n    private String            employeeId;\n    private Faculty           faculty;\n    private ArrayList<Course> coursesTaught = new ArrayList<>();\n    private double            salary;\n    private ArrayList<Double> evalScores    = new ArrayList<>();\n\n    public Professor(String name,String natId,String empId,Faculty faculty,double salary){\n        super(name,natId); this.employeeId=empId;\n        this.faculty=faculty; this.salary=salary;\n    }\n    @Override public void addGrade(double score) {\n        if(score<0||score>100) throw new IllegalArgumentException(\"Score must be 0-100\");\n        evalScores.add(score);\n    }\n    @Override public double getGPA() {\n        if(evalScores.isEmpty()) return 0.0;\n        double sum=0; for(double s:evalScores) sum+=s;\n        return sum/evalScores.size();\n    }\n    @Override public String getLetterGrade() {\n        double avg=getGPA();\n        if(avg>=90)return \"Excellent\"; if(avg>=75)return \"Good\";\n        if(avg>=60)return \"Satisfactory\"; return \"Needs Improvement\";\n    }\n    public void assignCourse(Course c) { coursesTaught.add(c); }\n    @Override public String getRole()  { return \"Professor\"; }\n    @Override public void displayInfo(){\n        System.out.println(\"Professor[\"+employeeId+\"] \"+getName()+\n            \" faculty=\"+faculty+\" salary=$\"+salary+\" courses=\"+coursesTaught.size()+\n            \" eval=\"+getLetterGrade());\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Course c1 = new Course(\"CS101\",\"Intro to Java\",3,Faculty.ENGINEERING);\n        Course c2 = new Course(c1);   // copy constructor\n        c2 = new Course(\"CS102\",\"Data Structures\",3,Faculty.ENGINEERING);\n\n        Student   s1 = new Student(\"Ziad\",\"29010100\",\"S001\",Faculty.ENGINEERING);\n        Professor p1 = new Professor(\"Dr. Ahmed\",\"60050200\",\"P001\",Faculty.ENGINEERING,8000);\n\n        s1.enrollCourse(c1); s1.enrollCourse(c2);\n        p1.assignCourse(c1);\n\n        try {\n            s1.addGrade(85); s1.addGrade(92); s1.addGrade(150);\n        } catch (IllegalArgumentException e) {\n            System.out.println(\"Error: \" + e.getMessage());\n        }\n        s1.addGrade(78);\n        p1.addGrade(88); p1.addGrade(95);\n\n        ArrayList<Person> university = new ArrayList<>();\n        university.add(s1); university.add(p1);\n\n        for (Person p : university) {\n            p.displayInfo();\n            System.out.println(\"  Role: \" + p.getRole());\n        }\n        System.out.println(\"Total persons: \" + Person.getPersonCount());\n    }\n}"}];
+
+let answers={}, revealed={}, activeFilter='all';
+
+/* ── Util ── */
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Navigation ── */
+function showPage(id, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  (btn||event.target).classList.add('active');
+}
+
+/* ══ MCQ ══ */
+function buildFilters(){
+  const row = document.getElementById('filterRow');
+  const topics = [...new Set(MCQ.map(q=>q.topic))];
+  topics.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='fbtn'; b.textContent=t;
+    b.onclick=()=>setFilter(t,b);
+    row.appendChild(b);
+  });
+}
+
+function setFilter(topic, btn){
+  activeFilter=topic;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMCQ();
+}
+
+function renderMCQ(){
+  const filtered = activeFilter==='all' ? MCQ : MCQ.filter(q=>q.topic===activeFilter);
+  document.getElementById('s-tot').textContent=filtered.length;
+  document.getElementById('qList').innerHTML=filtered.map(buildCard).join('');
+  updateStats();
+}
+
+function buildCard(q){
+  const done = answers[q.id]!==undefined || revealed[q.id];
+  const cardCls = !done ? 'q-card' : (answers[q.id]===q.correct ? 'q-card c-ok' : 'q-card c-bad');
+
+  const opts = Object.entries(q.opts).map(([k,v])=>{
+    let cls='opt', keyCls='opt-k', ico='';
+    if(done){
+      cls+=' dis';
+      if(k===q.correct)         { cls+=' rev'; keyCls+=' rev-k'; ico='<span class="opt-ico">✓</span>'; }
+      else if(k===answers[q.id]){ cls+=' bad'; keyCls+=' bad-k'; ico='<span class="opt-ico">✗</span>'; }
+    }
+    return `<button class="${cls}" onclick="pick(${q.id},'${k}')">
+      <span class="${keyCls}">${k}</span>
+      <span class="opt-v">${esc(v)}</span>${ico}
+    </button>`;
+  }).join('');
+
+  const revBtn = !done ? `<button class="reveal-btn" onclick="doReveal(${q.id})">👁 اظهر الإجابة</button>` : '';
+  const expCls = done ? 'exp show' : 'exp';
+
+  return `<div class="${cardCls}" id="card${q.id}">
+    <div class="q-head">
+      <div class="q-meta">
+        <span class="badge b-num">س${q.id}</span>
+        <span class="badge b-topic">${esc(q.topic)}</span>
+        <span class="badge b-hard">Hard</span>
+      </div>
+      <div class="q-text">${esc(q.q)}</div>
+    </div>
+    <div class="q-body">
+      ${opts}
+      ${revBtn}
+      <div class="${expCls}" id="exp${q.id}">
+        <div class="exp-hd">💡 الشرح</div>
+        ${esc(q.exp)}
+      </div>
+    </div>
+  </div>`;
+}
+
+function pick(id, chosen){
+  if(answers[id]!==undefined || revealed[id]) return;
+  answers[id]=chosen;
+  refresh(id);
+  updateStats();
+  checkDone();
+}
+
+function doReveal(id){
+  if(answers[id]!==undefined || revealed[id]) return;
+  revealed[id]=true;
+  refresh(id);
+  updateStats();
+  checkDone();
+}
+
+function refresh(id){
+  const q = MCQ.find(q=>q.id===id);
+  const el= document.getElementById('card'+id);
+  if(el && q) el.outerHTML = buildCard(q);
+}
+
+function updateStats(){
+  const filtered = activeFilter==='all' ? MCQ : MCQ.filter(q=>q.topic===activeFilter);
+  const ans = filtered.filter(q=>answers[q.id]!==undefined);
+  const cor = ans.filter(q=>answers[q.id]===q.correct).length;
+  const rev = filtered.filter(q=>revealed[q.id]).length;
+  const done= ans.length + rev;
+  document.getElementById('s-tot').textContent=filtered.length;
+  document.getElementById('s-cor').textContent=cor;
+  document.getElementById('s-wrg').textContent=ans.length-cor;
+  document.getElementById('s-rem').textContent=filtered.length-done;
+  const pct=Math.round(done/filtered.length*100)||0;
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('plbl').textContent=`${done} من ${filtered.length} أُجيب عليها (${pct}%)`;
+}
+
+function checkDone(){
+  const total=MCQ.length;
+  const done=Object.keys(answers).length+Object.keys(revealed).length;
+  if(done>=total) showResult();
+}
+
+function showResult(){
+  const cor=Object.entries(answers).filter(([id,a])=>MCQ.find(q=>q.id==id)?.correct===a).length;
+  const total=Object.keys(answers).length;
+  const pct=total?Math.round(cor/total*100):0;
+  const emoji=pct>=85?'🏆':pct>=70?'🎉':pct>=55?'👍':'💪';
+  document.getElementById('resEmoji').textContent=emoji;
+  document.getElementById('resBig').textContent=cor+'/'+total;
+  document.getElementById('resSub').textContent=pct+'% نسبة الإجابات الصحيحة';
+  document.getElementById('resStats').innerHTML=`
+    <div class="stat-box s-ok"><div class="stat-n">${cor}</div><div class="stat-l">صحيح</div></div>
+    <div class="stat-box s-bad"><div class="stat-n">${total-cor}</div><div class="stat-l">خطأ</div></div>
+    <div class="stat-box s-rem"><div class="stat-n">${Object.keys(revealed).length}</div><div class="stat-l">كُشفت</div></div>`;
+  const w=document.getElementById('resWrap');
+  w.classList.add('show');
+  w.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function restart(){
+  answers={}; revealed={};
+  document.getElementById('resWrap').classList.remove('show');
+  renderMCQ();
+}
+
+/* ══ COMP ══ */
+const NODE_CLASS=['node-class1','node-class2','node-class3'];
+let classIdx=0;
+
+function nodeClass(type, idx){
+  if(type==='enum')     return 'node-enum';
+  if(type==='interface')return 'node-iface';
+  if(type==='abstract') return 'node-abstract';
+  return NODE_CLASS[idx % NODE_CLASS.length];
+}
+
+function stereoLabel(type){
+  if(type==='enum')     return '«enum»';
+  if(type==='interface')return '«interface»';
+  if(type==='abstract') return '«abstract»';
+  return '';
+}
+
+function buildUMLNode(node, classCount){
+  const cls  = nodeClass(node.type, classCount);
+  const stereo= stereoLabel(node.type);
+  let html = `<div class="uml-node ${cls}">
+    <div class="uml-node-head">
+      ${stereo?`<span class="uml-node-stereo">${stereo}</span>`:''}
+      <div class="uml-node-name">${esc(node.name)}</div>
+    </div>`;
+
+  if(node.values){
+    html+=`<div class="uml-section">${node.values.map(v=>`<div class="uml-item">${esc(v)}</div>`).join('')}</div>`;
+  }
+  if(node.fields){
+    html+=`<div class="uml-section">${node.fields.map(f=>`<div class="uml-item">${esc(f)}</div>`).join('')}</div>`;
+  }
+  if(node.methods){
+    html+=`<div class="uml-section">${node.methods.map(m=>`<div class="uml-item">${esc(m)}</div>`).join('')}</div>`;
+  }
+  html+=`</div>`;
+  return html;
+}
+
+function buildRelations(rels){
+  return rels.map(r=>{
+    const arrow = r.type==='extends' ? '──────▷' : r.type==='implements' ? '┄┄┄┄▷' : '- - -▷';
+    const labelCls = r.type==='extends' ? 'rel-extends' : r.type==='implements' ? 'rel-implements' : 'rel-uses';
+    return `<div class="uml-rel">
+      <span>${esc(r.from)}</span>
+      <span class="rel-arrow">${arrow}</span>
+      <span>${esc(r.to)}</span>
+      <span class="rel-label ${labelCls}">${r.type}</span>
+    </div>`;
+  }).join('');
+}
+
+function getTopicTags(subtitle){
+  const map={
+    'Abstract':'t-abstract','Interface':'t-interface','Enum':'t-enum',
+    'Static':'t-static','Exception':'t-exception','ArrayList':'t-arraylist',
+    'Inheritance':'t-inherit','Polymorphism':'t-poly'
+  };
+  const tags=[];
+  for(const [k,cls] of Object.entries(map)){
+    if(subtitle.includes(k)) tags.push(`<span class="t-tag ${cls}">${k}</span>`);
+  }
+  return tags.join('');
+}
+
+function renderComp(){
+  let classCount=0;
+  const list=document.getElementById('compList');
+  list.innerHTML=COMP.map((c,ci)=>{
+    const nodesHtml=c.uml_nodes.map(n=>{
+      let cnt=0;
+      if(n.type==='class') cnt=classCount++;
+      return buildUMLNode(n, cnt);
+    }).join('');
+    const relsHtml = buildRelations(c.relations||[]);
+    const tags = getTopicTags(c.subtitle||'');
+    const codeId = 'code'+c.id;
+    const btnId  = 'cbtn'+c.id;
+
+    return `<div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-num">${ci+1}</div>
+        <div class="comp-head-text">
+          <div class="comp-title">${esc(c.title)}</div>
+          <div class="comp-subtitle">${esc(c.subtitle||'')}</div>
+        </div>
+      </div>
+      <div class="comp-body">
+
+        <div class="comp-section">
+          <div class="section-title">المطلوب</div>
+          <div class="topics-row">${tags}</div>
+          <div class="q-box">${esc(c.question)}</div>
+        </div>
+
+        <div class="comp-section">
+          <div class="section-title">UML Class Diagram</div>
+          <div class="uml-canvas">
+            <div class="uml-grid">${nodesHtml}</div>
+            ${relsHtml?`<div class="uml-relations">${relsHtml}</div>`:''}
+            ${c.main_hint?`<div class="main-hint">📌 Main: ${esc(c.main_hint)}</div>`:''}
+          </div>
+        </div>
+
+        <div class="comp-section">
+          <div class="section-title">الكود</div>
+          <div class="code-btn-row">
+            <button class="code-toggle-btn" id="${btnId}" onclick="toggleCode('${codeId}','${btnId}')">
+              👁 اظهر الكود
+            </button>
+            <button class="copy-btn" onclick="copyCode('${codeId}')">📋 نسخ</button>
+          </div>
+          <div class="code-wrap">
+            <div class="code-box" id="${codeId}">${esc(c.code)}</div>
+          </div>
+        </div>
+
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCode(codeId, btnId){
+  const box=document.getElementById(codeId);
+  const btn=document.getElementById(btnId);
+  const showing=box.classList.toggle('show');
+  btn.textContent = showing ? '🙈 إخفاء الكود' : '👁 اظهر الكود';
+  btn.classList.toggle('showing', showing);
+}
+
+function copyCode(codeId){
+  const text=document.getElementById(codeId).textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=event.target;
+    btn.textContent='✓ تم النسخ';
+    setTimeout(()=>btn.textContent='📋 نسخ',1800);
+  });
+}
+
+/* ── Init ── */
+buildFilters();
+renderMCQ();
+renderComp();
+</script>
+</body>
+</html>
